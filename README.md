@@ -19,24 +19,6 @@ The Food Quality Management System is a database-driven project designed to ensu
 - **Aggregated Analytics:**  
   Provides category-wise quality summaries and other analytics.
 
-## Core Entities
-
-- `FoodItem`: Details of food products.
-- `Supplier`: Information about food sources.
-- `Inspector`: Records of inspection personnel.
-- `Batch`: Tracks production batches.
-- `QualityTest`: Stores test parameters and outcomes.
-
-## Technologies Used
-
-- **Oracle SQL & PL/SQL:**  
-  Advanced DBMS concepts including stored procedures, functions, transactions, indexing, and views.
-
-## Project Structure
-
-- SQL scripts for schema, procedures, functions, and views.
-- Sample datasets for testing and demonstration.
-- Documentation for setup and usage.
 
 ## Team
 
