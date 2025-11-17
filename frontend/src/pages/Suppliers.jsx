@@ -1,56 +1,48 @@
 import { useEffect, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 
-// --- Sample Data for UI Preview ---
-const SAMPLE_SUPPLIERS = [
-  { SupplierID: 1, Name: "Fresh Farms" },
-  { SupplierID: 2, Name: "GreenLeaf" },
-  { SupplierID: 3, Name: "Veggie Co" },
-];
-// --- End Sample Data ---
-
 export default function Suppliers() {
-  const [suppliers, setSuppliers] = useState(SAMPLE_SUPPLIERS);
+  const [suppliers, setSuppliers] = useState([]);   // ✅ real data only
   const [name, setName] = useState("");
   const [flyIn, setFlyIn] = useState(false);
   const [newSupplierId, setNewSupplierId] = useState(null);
 
   useEffect(() => {
     setTimeout(() => setFlyIn(true), 50);
-    // Uncomment for real API
-    /*
+
+    // ✅ Fetch suppliers from backend
     fetch("http://localhost:5000/api/supplier")
       .then((res) => res.json())
-      .then(setSuppliers);
-    */
+      .then(setSuppliers)
+      .catch((err) => console.error("Fetch suppliers error:", err));
   }, []);
 
   function addSupplier(e) {
     e.preventDefault();
-    // Uncomment for real API
-    /*
+
+    // ✅ Add supplier to backend
     fetch("http://localhost:5000/api/supplier", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name }),
     })
       .then((res) => res.json())
-      .then((newSupplier) => setSuppliers([...suppliers, newSupplier]));
-    */
-    const newSupplier = { SupplierID: suppliers.length + 1, Name: name };
-    setSuppliers([...suppliers, newSupplier]);
-    setNewSupplierId(newSupplier.SupplierID);
-    setName("");
-    setTimeout(() => setNewSupplierId(null), 700);
+      .then((newSupplier) => {
+        setSuppliers([...suppliers, newSupplier]);
+        setNewSupplierId(newSupplier.SupplierID);
+        setName("");
+        setTimeout(() => setNewSupplierId(null), 700);
+      })
+      .catch((err) => console.error("Add supplier error:", err));
   }
 
   function deleteSupplier(id) {
-    // Uncomment for real API
-    /*
+    // ✅ Delete supplier from backend
     fetch(`http://localhost:5000/api/supplier/${id}`, { method: "DELETE" })
-      .then(() => setSuppliers(suppliers.filter((s) => s.SupplierID !== id)));
-    */
-    setSuppliers(suppliers.filter((s) => s.SupplierID !== id));
+      .then(() => {
+        setSuppliers(suppliers.filter((s) => s.SupplierID !== id));
+      })
+      .catch((err) => console.error("Delete supplier error:", err));
   }
 
   // Accent colors
@@ -68,10 +60,16 @@ export default function Suppliers() {
   };
 
   return (
-    <div className={`max-w-4xl mx-auto py-6 px-2 flex flex-col items-center transition-all duration-700 ${
-      flyIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-    }`}>
-      <h2 className="w-full text-2xl font-extrabold mb-10 text-white text-left">Suppliers</h2>
+    <div
+      className={`max-w-4xl mx-auto py-6 px-2 flex flex-col items-center transition-all duration-700 ${
+        flyIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+      }`}
+    >
+      <h2 className="w-full text-2xl font-extrabold mb-10 text-white text-left">
+        Suppliers
+      </h2>
+
+      {/* Add Supplier Form */}
       <form
         onSubmit={addSupplier}
         className="w-full mb-8 grid grid-cols-[1fr_auto] gap-6 items-center"
@@ -99,6 +97,8 @@ export default function Suppliers() {
           <Plus size={28} color={accent.white} />
         </button>
       </form>
+
+      {/* Suppliers Table */}
       <div className="w-full">
         <div className="overflow-x-auto">
           <table
@@ -111,9 +111,24 @@ export default function Suppliers() {
           >
             <thead>
               <tr style={{ background: accent.black }}>
-                <th className="px-6 py-4 text-xl font-bold text-left text-white border-b-2" style={{ borderColor: accent.dark }}>ID</th>
-                <th className="px-6 py-4 text-xl font-bold text-left text-white border-b-2" style={{ borderColor: accent.dark }}>Name</th>
-                <th className="px-6 py-4 text-xl font-bold text-center text-white border-b-2" style={{ borderColor: accent.dark }}>Actions</th>
+                <th
+                  className="px-6 py-4 text-xl font-bold text-left text-white border-b-2"
+                  style={{ borderColor: accent.dark }}
+                >
+                  ID
+                </th>
+                <th
+                  className="px-6 py-4 text-xl font-bold text-left text-white border-b-2"
+                  style={{ borderColor: accent.dark }}
+                >
+                  Name
+                </th>
+                <th
+                  className="px-6 py-4 text-xl font-bold text-center text-white border-b-2"
+                  style={{ borderColor: accent.dark }}
+                >
+                  Actions
+                </th>
               </tr>
               <tr>
                 <td colSpan={3}>
@@ -121,6 +136,7 @@ export default function Suppliers() {
                 </td>
               </tr>
             </thead>
+
             <tbody>
               {suppliers.map((s) => (
                 <tr
@@ -141,8 +157,14 @@ export default function Suppliers() {
                       : {}),
                   }}
                 >
-                  <td className="px-6 py-5 text-lg text-white">{s.SupplierID}</td>
-                  <td className="px-6 py-5 text-lg text-white font-bold">{s.Name}</td>
+                  <td className="px-6 py-5 text-lg text-white">
+                    {s.SupplierID}
+                  </td>
+
+                  <td className="px-6 py-5 text-lg text-white font-bold">
+                    {s.Name}
+                  </td>
+
                   <td className="px-6 py-5 text-center">
                     <button
                       className="bg-transparent hover:bg-red-100 px-2 py-2 rounded-xl flex justify-center mx-auto"

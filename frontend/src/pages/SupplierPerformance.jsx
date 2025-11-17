@@ -1,26 +1,21 @@
 import { useEffect, useState } from "react";
 import { CheckCircle2, AlertTriangle, XCircle } from "lucide-react";
 
-// --- Sample Data for UI Preview ---
-const SAMPLE_PERFORMANCE = [
-  { Supplier: "Fresh Farms", Reliability: 92 },
-  { Supplier: "GreenLeaf", Reliability: 75 },
-  { Supplier: "Veggie Co", Reliability: 58 },
-];
-// --- End Sample Data ---
-
 export default function SupplierPerformance() {
-  const [performance, setPerformance] = useState(SAMPLE_PERFORMANCE);
+  const [performance, setPerformance] = useState([]);
   const [flyIn, setFlyIn] = useState(false);
 
   useEffect(() => {
     setTimeout(() => setFlyIn(true), 50);
-    // Uncomment for real API
-    /*
+
+    // ✅ Fetch real data from backend
     fetch("http://localhost:5000/api/supplier-performance")
       .then((res) => res.json())
-      .then(setPerformance);
-    */
+      .then((data) => setPerformance(data || []))
+      .catch((err) => {
+        console.error("Error fetching supplier performance:", err);
+        setPerformance([]); // fallback
+      });
   }, []);
 
   function getBadge(percent) {
@@ -31,6 +26,7 @@ export default function SupplierPerformance() {
           Reliable
         </span>
       );
+
     if (percent < 60)
       return (
         <span className="flex items-center gap-2 font-bold text-red-500">
@@ -38,6 +34,7 @@ export default function SupplierPerformance() {
           Low
         </span>
       );
+
     return (
       <span className="flex items-center gap-2 font-bold text-yellow-400">
         <AlertTriangle size={22} className="text-yellow-400" />
@@ -46,25 +43,22 @@ export default function SupplierPerformance() {
     );
   }
 
-  // Accent colors
   const accent = {
-    blue: "#61dafb",
-    pink: "#ff61e6",
-    lime: "#a3e635",
-    green: "#22c55e",
-    red: "#ef4444",
-    yellow: "#fbbf24",
     black: "#18122b",
     dark: "#23272f",
-    gray: "#18181b",
     white: "#fff",
   };
 
   return (
-    <div className={`max-w-4xl mx-auto py-6 px-2 flex flex-col items-center transition-all duration-700 ${
-      flyIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-    }`}>
-      <h2 className="w-full text-2xl font-extrabold mb-10 text-white text-left">Supplier Performance</h2>
+    <div
+      className={`max-w-4xl mx-auto py-6 px-2 flex flex-col items-center transition-all duration-700 ${
+        flyIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+      }`}
+    >
+      <h2 className="w-full text-2xl font-extrabold mb-10 text-white text-left">
+        Supplier Performance
+      </h2>
+
       <div className="w-full">
         <div className="overflow-x-auto">
           <table
@@ -77,9 +71,24 @@ export default function SupplierPerformance() {
           >
             <thead>
               <tr style={{ background: accent.black }}>
-                <th className="px-6 py-4 text-xl font-bold text-left text-white border-b-2" style={{ borderColor: accent.dark }}>Supplier</th>
-                <th className="px-6 py-4 text-xl font-bold text-left text-white border-b-2" style={{ borderColor: accent.dark }}>Reliability %</th>
-                <th className="px-6 py-4 text-xl font-bold text-left text-white border-b-2" style={{ borderColor: accent.dark }}>Badge</th>
+                <th
+                  className="px-6 py-4 text-xl font-bold text-left text-white border-b-2"
+                  style={{ borderColor: accent.dark }}
+                >
+                  Supplier
+                </th>
+                <th
+                  className="px-6 py-4 text-xl font-bold text-left text-white border-b-2"
+                  style={{ borderColor: accent.dark }}
+                >
+                  Reliability %
+                </th>
+                <th
+                  className="px-6 py-4 text-xl font-bold text-left text-white border-b-2"
+                  style={{ borderColor: accent.dark }}
+                >
+                  Badge
+                </th>
               </tr>
               <tr>
                 <td colSpan={3}>
@@ -87,6 +96,7 @@ export default function SupplierPerformance() {
                 </td>
               </tr>
             </thead>
+
             <tbody>
               {performance.map((p, idx) => (
                 <tr
@@ -96,11 +106,26 @@ export default function SupplierPerformance() {
                     borderBottom: `2px solid ${accent.dark}`,
                   }}
                 >
-                  <td className="px-6 py-5 text-lg text-white font-bold">{p.Supplier}</td>
-                  <td className="px-6 py-5 text-lg text-white font-bold">{p.Reliability}</td>
+                  <td className="px-6 py-5 text-lg text-white font-bold">
+                    {p.Supplier}
+                  </td>
+                  <td className="px-6 py-5 text-lg text-white font-bold">
+                    {p.Reliability}
+                  </td>
                   <td className="px-6 py-5">{getBadge(p.Reliability)}</td>
                 </tr>
               ))}
+
+              {performance.length === 0 && (
+                <tr>
+                  <td
+                    colSpan={3}
+                    className="text-center py-6 text-gray-300 text-lg"
+                  >
+                    No data available
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
